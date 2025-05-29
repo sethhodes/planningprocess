@@ -4,111 +4,739 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Three-Pillar Implementation Timeline</title>
-  <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-      startOnLoad: true,
-      theme: 'default',
-      themeVariables: {
-        fontFamily: 'Inter, sans-serif',
-        fontSize: '11px',
-        primaryColor: '#673ab7',
-        primaryTextColor: '#ffffff',
-        barTextColor: '#ffffff',
-        textColor: '#212121',
-        lineColor: '#bdbdbd',
-        sectionBkgColor: '#ede7f6',
-        sectionBkgColor2: '#e8eaf6'
-      },
-      gantt: {
-        barHeight: 45,
-        barGap: 12,
-        topPadding: 50,
-        leftPadding: 160,
-        fontSize: 11,
-        sectionFontSize: 16,
-        numberSectionStyles: 4,
-        useMaxWidth: false
-      }
-    });
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f7f9fc;
+    * {
       margin: 0;
-      padding: 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    .container {
+    body {
+      font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #fafafa;
+      color: #1a1a1a;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+
+    .timeline-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 2rem;
+    }
+
+    .header {
+      grid-column: 1 / -1;
+      text-align: left;
+      margin-bottom: 4rem;
+      padding: 3rem 0;
+      border-bottom: 2px solid #e5e5e5;
+    }
+
+    .header h1 {
+      font-size: 3rem;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: #1a1a1a;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      background: #1a1a1a;
+      color: #ffffff;
+      padding: 1rem 2rem;
+      font-weight: 400;
+      font-size: 0.9rem;
+      letter-spacing: 0.01em;
+      margin-top: 2rem;
+      display: inline-block;
+    }
+
+    .timeline-overview {
+      grid-column: 1 / -1;
       background: #ffffff;
-      padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-      max-width: 1500px;
-      width: 100%;
+      border: 2px solid #1a1a1a;
+      margin-bottom: 3rem;
     }
 
-    h1 {
-      font-size: 2rem;
-      color: #4527a0;
-      margin-bottom: 1.5rem;
+    .timeline-header {
+      background: #1a1a1a;
+      color: #ffffff;
+      padding: 1.5rem 2rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: 200px repeat(14, 1fr);
+      border-collapse: collapse;
+    }
+
+    .week-header {
+      padding: 0.75rem 0.5rem;
+      background: #f8f8f8;
+      border-right: 1px solid #e5e5e5;
+      border-bottom: 1px solid #e5e5e5;
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-align: center;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      color: #666666;
+    }
+
+    .phase-section {
+      grid-column: 1 / -1;
+      background: #ffffff;
+      margin: 2rem 0;
+      border: 1px solid #e5e5e5;
+    }
+
+    .phase-header {
+      background: #1a1a1a;
+      color: #ffffff;
+      padding: 2rem;
+      border-bottom: 2px solid #333;
+    }
+
+    .phase-header h2 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .phase-duration {
+      font-weight: 300;
+      color: #cccccc;
+      font-size: 0.9rem;
+      letter-spacing: 0.01em;
+    }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: 200px repeat(14, 1fr);
+      gap: 0;
+    }
+
+    .task-label {
+      padding: 1rem;
+      background: #f8f8f8;
+      border-right: 1px solid #e5e5e5;
+      border-bottom: 1px solid #e5e5e5;
+      font-size: 0.9rem;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+    }
+
+    .task-bar {
+      height: 3rem;
+      border-bottom: 1px solid #e5e5e5;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .bar {
+      background: #1a1a1a;
+      height: 1.5rem;
+      margin: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+
+    .bar.active {
+      background: #666666;
+    }
+
+    .bar.design {
+      background: #333333;
+    }
+
+    .bar.review {
+      background: #555555;
+    }
+
+    .bar.implementation {
+      background: #222222;
+    }
+
+    .legend {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      background: #ffffff;
+      border: 2px solid #1a1a1a;
+      margin: 3rem 0;
+    }
+
+    .legend-item {
+      padding: 1.5rem;
+      text-align: center;
+      border-right: 1px solid #e5e5e5;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+
+    .legend-item:last-child {
+      border-right: none;
+    }
+
+    .legend-color {
+      width: 100%;
+      height: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .color-analysis { background: #666666; }
+    .color-design { background: #333333; }
+    .color-review { background: #555555; }
+    .color-implementation { background: #222222; }
+
+    .summary-stats {
+      grid-column: 1 / -1;
+      background: #f0f0f0;
+      border: 2px solid #cccccc;
+      padding: 3rem;
+      margin: 3rem 0;
+    }
+
+    .summary-stats h3 {
+      color: #1a1a1a;
+      margin-bottom: 2rem;
+      font-size: 1.3rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+
+    .stat-item {
       text-align: center;
     }
 
-    .mermaid {
-      overflow-x: auto;
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 300;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #666666;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1200px) {
+      .timeline-grid,
+      .task-grid {
+        grid-template-columns: 150px repeat(14, 30px);
+      }
+      
+      .task-label {
+        font-size: 0.8rem;
+      }
     }
 
     @media (max-width: 768px) {
-      .container {
-        padding: 1rem;
+      .timeline-container {
+        padding: 2rem 1rem;
       }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .legend {
+        grid-template-columns: 1fr;
+      }
+      
+      .legend-item {
+        border-right: none;
+        border-bottom: 1px solid #e5e5e5;
+      }
+      
+      .legend-item:last-child {
+        border-bottom: none;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .timeline-grid,
+      .task-grid {
+        overflow-x: auto;
+        min-width: 800px;
+      }
+    }
 
-      h1 {
-        font-size: 1.5rem;
-      }
+    /* Typography Classes */
+    .type-display {
+      font-size: 3rem;
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .type-title {
+      font-size: 1.5rem;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+
+    .type-body {
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .type-caption {
+      font-size: 0.85rem;
+      font-weight: 400;
+      line-height: 1.4;
+      letter-spacing: 0.01em;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Three-Pillar Implementation Timeline</h1>
-    <div class="mermaid">
-gantt
-    title Implementation Roadmap (Weeks-Based View)
-    dateFormat  YYYY-MM-DD
-    axisFormat  %W
+  <div class="timeline-container">
+    <div class="grid">
+      <div class="header">
+        <h1 class="type-display">Three-Pillar Implementation</h1>
+        <div class="type-title">Timeline & Roadmap</div>
+        <div class="subtitle type-caption">
+          EXECUTION FRAMEWORK: 14-week structured implementation process
+        </div>
+      </div>
 
-    section Phase 1: Core Assessment (Analysis)
-    Business Growth Analysis      :active, assess1, 2024-01-01, 3d
-    Tax Optimization Review       :assess2, after assess1, 4d
-    Wealth Building Analysis      :assess3, after assess1, 4d
-    Family Planning Review        :assess4, after assess2, 3d
-    Current Strategy Review       :assess5, after assess3, 3d
+      <div class="timeline-overview">
+        <div class="timeline-header">
+          Project Timeline Overview
+        </div>
+        <div class="timeline-grid">
+          <div class="week-header">Phase</div>
+          <div class="week-header">W1</div>
+          <div class="week-header">W2</div>
+          <div class="week-header">W3</div>
+          <div class="week-header">W4</div>
+          <div class="week-header">W5</div>
+          <div class="week-header">W6</div>
+          <div class="week-header">W7</div>
+          <div class="week-header">W8</div>
+          <div class="week-header">W9</div>
+          <div class="week-header">W10</div>
+          <div class="week-header">W11</div>
+          <div class="week-header">W12</div>
+          <div class="week-header">W13</div>
+          <div class="week-header">W14</div>
+        </div>
+      </div>
 
-    section Phase 2: Strategy Development (Design)
-    Tax Strategy Design           :strategy1, after assess5, 5d
-    Charitable Program Design     :strategy2, after assess5, 5d
-    Transfer Strategy Planning    :strategy3, after strategy1, 4d
-    Wealth Building Integration   :strategy4, after strategy2, 4d
-    Core Strategy Integration     :strategy5, after strategy3, 3d
+      <div class="phase-section">
+        <div class="phase-header">
+          <h2 class="type-title">Phase 1: Core Assessment</h2>
+          <div class="phase-duration type-caption">Duration: 3 weeks | Focus: Analysis & Discovery</div>
+        </div>
+        <div class="task-grid">
+          <div class="task-label">Business Growth Analysis</div>
+          <div class="task-bar"><div class="bar active" style="grid-column: span 2;">3 Days</div></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          
+          <div class="task-label">Tax Optimization Review</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar active" style="grid-column: span 3;">4 Days</div></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          
+          <div class="task-label">Wealth Building Analysis</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar active" style="grid-column: span 3;">4 Days</div></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          
+          <div class="task-label">Family Planning Review</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar active" style="grid-column: span 2;">3 Days</div></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          
+          <div class="task-label">Current Strategy Review</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar active" style="grid-column: span 2;">3 Days</div></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+        </div>
+      </div>
 
-    section Phase 3: Presentation (Review)
-    Core Presentation Prep        :present1, after strategy5, 3d
-    Client Strategy Meeting       :present2, after present1, 2d
-    Annual Review Planning        :present3, after present2, 2d
+      <div class="phase-section">
+        <div class="phase-header">
+          <h2 class="type-title">Phase 2: Strategy Development</h2>
+          <div class="phase-duration type-caption">Duration: 3 weeks | Focus: Design & Planning</div>
+        </div>
+        <div class="task-grid">
+          <div class="task-label">Tax Strategy Design</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar design" style="grid-column: span 3;">5 Days</div></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          
+          <div class="task-label">Charitable Program Design</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar design" style="grid-column: span 3;">5 Days</div></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          
+          <div class="task-label">Transfer Strategy Planning</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar design" style="grid-column: span 3;">4 Days</div></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
 
-    section Phase 4: Execution (Implementation)
-    Core Documentation            :implement1, after present3, 5d
-    Charitable Structure          :implement2, after present3, 7d
-    Transfer Implementation       :implement3, after implement1, 5d
-    Tax Strategy Execution        :implement4, after implement2, 5d
-    Monitoring Setup              :implement5, after implement3, 3d
+          <div class="task-label">Wealth Building Integration</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar design" style="grid-column: span 3;">4 Days</div></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+
+          <div class="task-label">Core Strategy Integration</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar design" style="grid-column: span 2;">3 Days</div></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+        </div>
+      </div>
+
+      <div class="phase-section">
+        <div class="phase-header">
+          <h2 class="type-title">Phase 3: Client Presentation</h2>
+          <div class="phase-duration type-caption">Duration: 1 week | Focus: Review & Approval</div>
+        </div>
+        <div class="task-grid">
+          <div class="task-label">Core Presentation Prep</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar review" style="grid-column: span 2;">3 Days</div></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          
+          <div class="task-label">Client Strategy Meeting</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar review" style="grid-column: span 1;">2 Days</div></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          
+          <div class="task-label">Annual Review Planning</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar review" style="grid-column: span 1;">2 Days</div></div>
+          <div class="task-bar"></div>
+        </div>
+      </div>
+
+      <div class="phase-section">
+        <div class="phase-header">
+          <h2 class="type-title">Phase 4: Implementation</h2>
+          <div class="phase-duration type-caption">Duration: 6 weeks | Focus: Execution & Setup</div>
+        </div>
+        <div class="task-grid">
+          <div class="task-label">Core Documentation</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar implementation" style="grid-column: span 1;">5 Days</div></div>
+          
+          <div class="task-label">Charitable Structure</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar implementation" style="grid-column: span 1;">7 Days</div></div>
+          
+          <div class="task-label">Transfer Implementation</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar implementation" style="grid-column: span 1;">5 Days</div></div>
+          
+          <div class="task-label">Tax Strategy Execution</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar implementation" style="grid-column: span 1;">5 Days</div></div>
+          
+          <div class="task-label">Monitoring Setup</div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"></div>
+          <div class="task-bar"><div class="bar implementation" style="grid-column: span 1;">3 Days</div></div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-color color-analysis"></div>
+          Phase 1: Analysis
+        </div>
+        <div class="legend-item">
+          <div class="legend-color color-design"></div>
+          Phase 2: Design
+        </div>
+        <div class="legend-item">
+          <div class="legend-color color-review"></div>
+          Phase 3: Review
+        </div>
+        <div class="legend-item">
+          <div class="legend-color color-implementation"></div>
+          Phase 4: Implementation
+        </div>
+      </div>
+
+      <div class="summary-stats">
+        <h3>Project Summary</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number">14</div>
+            <div class="stat-label">Total Weeks</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">18</div>
+            <div class="stat-label">Key Tasks</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">4</div>
+            <div class="stat-label">Major Phases</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Core Pillars</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </body>
