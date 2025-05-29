@@ -246,6 +246,13 @@
         font-size: 0.9rem;
         letter-spacing: 0.01em;
         text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .progress-step:hover {
+        background: #f8f8f8;
+        color: #1a1a1a;
       }
 
       .progress-step:last-child {
@@ -382,25 +389,25 @@
         </div>
 
         <div class="progress-indicator">
-          <div class="progress-step active">
+          <div class="progress-step active" onclick="scrollToPhase('phase-1')">
             <span class="progress-step-number">01</span>
             Assessment
           </div>
-          <div class="progress-step">
+          <div class="progress-step" onclick="scrollToPhase('phase-2')">
             <span class="progress-step-number">02</span>
             Strategy Development
           </div>
-          <div class="progress-step">
+          <div class="progress-step" onclick="scrollToPhase('phase-3')">
             <span class="progress-step-number">03</span>
             Client Education
           </div>
-          <div class="progress-step">
+          <div class="progress-step" onclick="scrollToPhase('phase-4')">
             <span class="progress-step-number">04</span>
             Implementation
           </div>
         </div>
 
-        <div class="phase">
+        <div class="phase" id="phase-1">
           <div class="phase-header">
             <h2 class="type-title">Phase 1: Core Assessment & Wealth Building Analysis</h2>
             <div class="timeline type-caption">Duration: 3 weeks | Focus: Long-term wealth optimization</div>
@@ -502,7 +509,7 @@
           </div>
         </div>
 
-        <div class="phase">
+        <div class="phase" id="phase-2">
           <div class="phase-header">
             <h2 class="type-title">Phase 2: Core Strategy Development</h2>
             <div class="timeline type-caption">Duration: 3 weeks | Focus: Wealth building optimization</div>
@@ -548,7 +555,7 @@
           </div>
         </div>
 
-        <div class="phase">
+        <div class="phase" id="phase-3">
           <div class="phase-header">
             <h2 class="type-title">Phase 3: Client Education & Presentation</h2>
             <div class="timeline type-caption">Duration: 2 weeks | Focus: Long-term strategy presentation</div>
@@ -571,7 +578,7 @@
           </div>
         </div>
 
-        <div class="phase">
+        <div class="phase" id="phase-4">
           <div class="phase-header">
             <h2 class="type-title">Phase 4: Core Implementation</h2>
             <div class="timeline type-caption">Duration: 6 weeks | Focus: Flexible long-term structures</div>
@@ -635,6 +642,53 @@
         section.classList.toggle('active');
         button.classList.toggle('active');
       }
+
+      function scrollToPhase(phaseId) {
+        const element = document.getElementById(phaseId);
+        if (element) {
+          element.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+          
+          // Update active state
+          document.querySelectorAll('.progress-step').forEach(step => {
+            step.classList.remove('active');
+          });
+          
+          // Set active state based on phase
+          const phaseNumber = phaseId.split('-')[1];
+          const activeStep = document.querySelector(`.progress-step:nth-child(${phaseNumber})`);
+          if (activeStep) {
+            activeStep.classList.add('active');
+          }
+        }
+      }
+
+      // Update active progress step on scroll
+      function updateProgressOnScroll() {
+        const phases = document.querySelectorAll('.phase');
+        const progressSteps = document.querySelectorAll('.progress-step');
+        
+        let currentPhase = 0;
+        
+        phases.forEach((phase, index) => {
+          const rect = phase.getBoundingClientRect();
+          if (rect.top <= window.innerHeight / 2 && rect.bottom >= 0) {
+            currentPhase = index;
+          }
+        });
+        
+        progressSteps.forEach((step, index) => {
+          step.classList.toggle('active', index === currentPhase);
+        });
+      }
+      
+      // Add scroll listener for automatic progress update
+      window.addEventListener('scroll', updateProgressOnScroll);
+      
+      // Initialize on load
+      document.addEventListener('DOMContentLoaded', updateProgressOnScroll);
     </script>
   </body>
 </html>
