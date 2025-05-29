@@ -8,14 +8,18 @@
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
     mermaid.initialize({
       startOnLoad: true,
-      theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
+      theme: 'default',
       themeVariables: {
         fontFamily: 'Inter, sans-serif',
-        primaryColor: '#27ae60',
-        primaryTextColor: '#fff',
-        tertiaryColor: '#f0f4f8',
-        lineColor: '#ccc',
-        textColor: '#333'
+        background: '#ffffff',
+        primaryColor: '#6a1b9a',         /* Purple */
+        primaryTextColor: '#ffffff',
+        noteBkgColor: '#e0e0e0',
+        noteTextColor: '#000000',
+        tertiaryColor: '#f3e5f5',
+        lineColor: '#cccccc',
+        sectionBkgColor: '#ede7f6',
+        sectionBkgColor2: '#e8eaf6'
       },
       gantt: {
         barHeight: 30,
@@ -31,7 +35,7 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f5f7fa;
+      background-color: #f7f9fc;
       margin: 0;
       padding: 2rem;
       display: flex;
@@ -41,22 +45,37 @@
     }
 
     .container {
-      background: white;
-      padding: 2rem;
+      background: #fff;
+      padding: 2.5rem 2rem;
       border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      max-width: 1200px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      max-width: 1300px;
       width: 100%;
     }
 
     h1 {
-      font-size: 1.75rem;
-      color: #2c3e50;
+      font-size: 2rem;
+      color: #4a148c;
       margin-bottom: 1.5rem;
+      text-align: center;
     }
 
     .mermaid {
       overflow-x: auto;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .container {
+        padding: 1.5rem 1rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
@@ -69,26 +88,26 @@ gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %W
 
-    section Phase 1: Core Assessment
+    section Phase 1: Core Assessment (Analysis)
     Business Growth Analysis      :active, assess1, 2024-01-01, 3d
     Tax Optimization Review       :assess2, after assess1, 4d
     Wealth Building Analysis      :assess3, after assess1, 4d
     Family Planning Review        :assess4, after assess2, 3d
     Current Strategy Review       :assess5, after assess3, 3d
 
-    section Phase 2: Core Strategy Development
+    section Phase 2: Strategy Development (Design)
     Tax Strategy Design           :strategy1, after assess5, 5d
     Charitable Program Design     :strategy2, after assess5, 5d
     Transfer Strategy Planning    :strategy3, after strategy1, 4d
     Wealth Building Integration   :strategy4, after strategy2, 4d
     Core Strategy Integration     :strategy5, after strategy3, 3d
 
-    section Phase 3: Presentation
+    section Phase 3: Presentation (Review)
     Core Presentation Prep        :present1, after strategy5, 3d
     Client Strategy Meeting       :present2, after present1, 2d
     Annual Review Planning        :present3, after present2, 2d
 
-    section Phase 4: Implementation
+    section Phase 4: Execution (Implementation)
     Core Documentation            :implement1, after present3, 5d
     Charitable Structure          :implement2, after present3, 7d
     Transfer Implementation       :implement3, after implement1, 5d
