@@ -4,377 +4,624 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Three-Pillar Workflow Detail</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-      body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
-      .workflow-container { max-width: 1200px; margin: 0 auto; }
-      .phase { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-      .phase-header { background: #27ae60; color: white; padding: 15px; margin: -20px -20px 20px -20px; border-radius: 8px 8px 0 0; }
-      .pillar { background: #ecf0f1; padding: 15px; margin: 10px 0; border-left: 4px solid #27ae60; border-radius: 4px; }
-      .week { background: #f8f9fa; padding: 12px; margin: 8px 0; border-left: 3px solid #f39c12; }
-      .deliverable { background: #d5f4e6; padding: 8px; margin: 5px 0; border-radius: 4px; font-size: 14px; }
-      .advisor-role { display: inline-block; background: #27ae60; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; margin-right: 10px; }
-      .timeline { font-weight: bold; color: #f39c12; }
-      .toggle-btn { background: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin: 5px; }
-      .collapsible { display: none; }
-      .collapsible.active { display: block; }
-      .annual-review { background: #e8f5e8; border: 2px solid #27ae60; padding: 15px; margin: 15px 0; border-radius: 8px; }
-      .future-option { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin: 10px 0; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background: #fafafa;
+        color: #1a1a1a;
+        line-height: 1.5;
+        font-weight: 400;
+      }
+
+      .workflow-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 2rem;
+      }
+
+      .header {
+        grid-column: 1 / -1;
+        text-align: left;
+        margin-bottom: 4rem;
+        padding: 3rem 0;
+        border-bottom: 2px solid #e5e5e5;
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        font-weight: 300;
+        letter-spacing: -0.02em;
+        color: #1a1a1a;
+        margin-bottom: 1rem;
+        line-height: 1.1;
+      }
+
+      .client-profile {
+        background: #1a1a1a;
+        color: #ffffff;
+        padding: 1rem 2rem;
+        font-weight: 400;
+        font-size: 0.9rem;
+        letter-spacing: 0.01em;
+        margin-top: 2rem;
+        display: inline-block;
+      }
+
+      .phase {
+        grid-column: 1 / -1;
+        background: #ffffff;
+        margin: 0 0 3rem 0;
+        border: 1px solid #e5e5e5;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .phase-header {
+        background: #1a1a1a;
+        color: #ffffff;
+        padding: 2rem;
+        border-bottom: 2px solid #333;
+      }
+
+      .phase-header h2 {
+        font-size: 1.5rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.01em;
+      }
+
+      .timeline {
+        font-weight: 300;
+        color: #cccccc;
+        font-size: 0.9rem;
+        letter-spacing: 0.01em;
+      }
+
+      .toggle-btn {
+        background: #ffffff;
+        color: #1a1a1a;
+        border: 2px solid #1a1a1a;
+        padding: 1rem 2rem;
+        cursor: pointer;
+        margin: 0;
+        font-weight: 500;
+        font-size: 0.9rem;
+        letter-spacing: 0.01em;
+        transition: all 0.2s ease;
+        width: 100%;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .toggle-btn:hover {
+        background: #1a1a1a;
+        color: #ffffff;
+      }
+
+      .toggle-btn::after {
+        content: '+';
+        font-weight: 300;
+        font-size: 1.2rem;
+        transition: transform 0.2s ease;
+      }
+
+      .toggle-btn.active {
+        background: #1a1a1a;
+        color: #ffffff;
+      }
+
+      .toggle-btn.active::after {
+        content: '−';
+      }
+
+      .collapsible {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .collapsible.active {
+        max-height: 2000px;
+      }
+
+      .week {
+        background: #f8f8f8;
+        padding: 2rem;
+        border-left: 4px solid #1a1a1a;
+      }
+
+      .week h4 {
+        color: #1a1a1a;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+
+      .pillar {
+        background: #ffffff;
+        padding: 2rem;
+        margin: 0 0 1.5rem 0;
+        border: 1px solid #e5e5e5;
+        border-left: 4px solid #666666;
+      }
+
+      .advisor-role {
+        display: inline-block;
+        background: #666666;
+        color: #ffffff;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+
+      .pillar strong {
+        display: block;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        letter-spacing: -0.01em;
+      }
+
+      .deliverable {
+        background: #f0f0f0;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+        border-left: 2px solid #cccccc;
+        line-height: 1.4;
+      }
+
+      .deliverable::before {
+        content: '•';
+        color: #666666;
+        margin-right: 0.75rem;
+        font-weight: bold;
+      }
+
+      .future-option {
+        background: #f8f8f8;
+        border-left: 4px solid #999999;
+        padding: 2rem;
+        margin: 1.5rem 0;
+      }
+
+      .future-option strong {
+        color: #333333;
+        display: block;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .annual-review {
+        grid-column: 1 / -1;
+        background: #f0f0f0;
+        border: 2px solid #cccccc;
+        padding: 3rem;
+        margin: 3rem 0;
+      }
+
+      .annual-review h3 {
+        color: #1a1a1a;
+        margin-bottom: 2rem;
+        font-size: 1.3rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+
+      .progress-indicator {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+        background: #ffffff;
+        border: 2px solid #1a1a1a;
+        margin: 3rem 0;
+      }
+
+      .progress-step {
+        padding: 1.5rem;
+        text-align: center;
+        font-weight: 500;
+        color: #666666;
+        border-right: 1px solid #e5e5e5;
+        font-size: 0.9rem;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+
+      .progress-step:last-child {
+        border-right: none;
+      }
+
+      .progress-step.active {
+        background: #1a1a1a;
+        color: #ffffff;
+      }
+
+      .progress-step-number {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 300;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Typography Scale */
+      .type-display {
+        font-size: 3rem;
+        font-weight: 300;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+      }
+
+      .type-title {
+        font-size: 1.5rem;
+        font-weight: 500;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+      }
+
+      .type-body {
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+      }
+
+      .type-caption {
+        font-size: 0.85rem;
+        font-weight: 400;
+        line-height: 1.4;
+        letter-spacing: 0.01em;
+      }
+
+      /* Grid System Helpers */
+      .col-1 { grid-column: span 1; }
+      .col-2 { grid-column: span 2; }
+      .col-3 { grid-column: span 3; }
+      .col-4 { grid-column: span 4; }
+      .col-6 { grid-column: span 6; }
+      .col-8 { grid-column: span 8; }
+      .col-12 { grid-column: span 12; }
+
+      /* Spacing System */
+      .mb-1 { margin-bottom: 0.5rem; }
+      .mb-2 { margin-bottom: 1rem; }
+      .mb-3 { margin-bottom: 1.5rem; }
+      .mb-4 { margin-bottom: 2rem; }
+      .mb-6 { margin-bottom: 3rem; }
+
+      .mt-1 { margin-top: 0.5rem; }
+      .mt-2 { margin-top: 1rem; }
+      .mt-3 { margin-top: 1.5rem; }
+      .mt-4 { margin-top: 2rem; }
+      .mt-6 { margin-top: 3rem; }
+
+      @media (max-width: 768px) {
+        .workflow-container {
+          padding: 2rem 1rem;
+        }
+        
+        .header h1 {
+          font-size: 2rem;
+        }
+        
+        .progress-indicator {
+          grid-template-columns: 1fr;
+        }
+        
+        .progress-step {
+          border-right: none;
+          border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .progress-step:last-child {
+          border-bottom: none;
+        }
+
+        .grid {
+          gap: 1rem;
+        }
+      }
+
+      /* Accessibility */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* Print Styles */
+      @media print {
+        .toggle-btn {
+          display: none;
+        }
+        
+        .collapsible {
+          max-height: none !important;
+        }
+        
+        .phase {
+          break-inside: avoid;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="workflow-container">
-      <h1 style="text-align: center; color: #27ae60;">
-        Three-Pillar Workflow: Core Focus Planning
-      </h1>
-      <p
-        style="text-align: center; background: #27ae60; color: white; padding: 10px; border-radius: 4px;"
-      >
-        <strong>Client Profile:</strong> Business owners with 5+ year or
-        uncertain exit timeline, wealth building focus
-      </p>
-
-      <div class="phase">
-        <div class="phase-header">
-          <h2>
-            Phase 1: Core Assessment & Wealth Building Analysis (Weeks 1-3)
-          </h2>
-          <span class="timeline"
-            >Duration: 3 weeks | Focus: Long-term wealth optimization</span
-          >
+      <div class="grid">
+        <div class="header">
+          <h1 class="type-display">Three-Pillar Workflow</h1>
+          <div class="type-title mb-2">Core Focus Planning</div>
+          <div class="client-profile type-caption">
+            CLIENT PROFILE: Business owners with 5+ year or uncertain exit timeline, wealth building focus
+          </div>
         </div>
 
-        <button class="toggle-btn" onclick="toggleSection('core-week1')">
-          Week 1: Business Growth & Wealth Building Assessment
-        </button>
-        <div id="core-week1" class="collapsible">
-          <div class="week">
-            <h4>Week 1 Activities</h4>
+        <div class="progress-indicator">
+          <div class="progress-step active">
+            <span class="progress-step-number">01</span>
+            Assessment
+          </div>
+          <div class="progress-step">
+            <span class="progress-step-number">02</span>
+            Strategy Development
+          </div>
+          <div class="progress-step">
+            <span class="progress-step-number">03</span>
+            Client Education
+          </div>
+          <div class="progress-step">
+            <span class="progress-step-number">04</span>
+            Implementation
+          </div>
+        </div>
 
+        <div class="phase">
+          <div class="phase-header">
+            <h2 class="type-title">Phase 1: Core Assessment & Wealth Building Analysis</h2>
+            <div class="timeline type-caption">Duration: 3 weeks | Focus: Long-term wealth optimization</div>
+          </div>
+
+          <button class="toggle-btn type-body" onclick="toggleSection('core-week1')">
+            Week 1: Business Growth & Wealth Building Assessment
+          </button>
+          <div id="core-week1" class="collapsible">
+            <div class="week">
+              <h4 class="type-title">Week 1 Activities</h4>
+
+              <div class="pillar">
+                <div class="advisor-role type-caption">Lead Advisor</div>
+                <strong class="type-body">Business Growth Strategy Assessment</strong>
+                <div class="deliverable type-caption">Business growth plans and capital needs</div>
+                <div class="deliverable type-caption">Reinvestment vs. distribution preferences</div>
+                <div class="deliverable type-caption">Management succession and development</div>
+                <div class="deliverable type-caption">Market expansion and diversification plans</div>
+              </div>
+
+              <div class="pillar">
+                <div class="advisor-role type-caption">Technical Advisor</div>
+                <strong class="type-body">Wealth Building Analysis</strong>
+                <div class="deliverable type-caption">Current asset allocation and diversification</div>
+                <div class="deliverable type-caption">Business vs. investment asset balance</div>
+                <div class="deliverable type-caption">Liquidity needs and cash flow planning</div>
+                <div class="deliverable type-caption">Risk tolerance and investment objectives</div>
+              </div>
+
+              <div class="future-option">
+                <strong class="type-body">Future Exit Option Preservation</strong>
+                <div class="deliverable type-caption">Maintaining flexibility for future exit planning</div>
+                <div class="deliverable type-caption">Annual exit interest assessment protocol</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="toggle-btn type-body" onclick="toggleSection('core-week2')">
+            Week 2: Tax Optimization & Current Planning Review
+          </button>
+          <div id="core-week2" class="collapsible">
+            <div class="week">
+              <h4 class="type-title">Week 2 Activities</h4>
+
+              <div class="pillar">
+                <div class="advisor-role type-caption">Technical Advisor</div>
+                <strong class="type-body">Current Tax Optimization</strong>
+                <div class="deliverable type-caption">Business growth phase tax strategies</div>
+                <div class="deliverable type-caption">Equipment and expansion tax benefits</div>
+                <div class="deliverable type-caption">Retirement plan optimization</div>
+                <div class="deliverable type-caption">Multi-year tax planning opportunities</div>
+              </div>
+
+              <div class="pillar">
+                <div class="advisor-role type-caption">Lead Advisor</div>
+                <strong class="type-body">Current Estate Planning Review</strong>
+                <div class="deliverable type-caption">Existing trust and entity structures</div>
+                <div class="deliverable type-caption">Insurance coverage adequacy</div>
+                <div class="deliverable type-caption">Beneficiary and succession planning</div>
+                <div class="deliverable type-caption">Asset protection considerations</div>
+              </div>
+
+              <div class="pillar">
+                <div class="advisor-role type-caption">Both Advisors</div>
+                <strong class="type-body">Charitable Giving Assessment</strong>
+                <div class="deliverable type-caption">Current giving patterns and motivations</div>
+                <div class="deliverable type-caption">Tax benefit optimization opportunities</div>
+                <div class="deliverable type-caption">Long-term philanthropic objectives</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="toggle-btn type-body" onclick="toggleSection('core-week3')">
+            Week 3: Integration Analysis & Long-term Planning
+          </button>
+          <div id="core-week3" class="collapsible">
+            <div class="week">
+              <h4 class="type-title">Week 3 Activities</h4>
+
+              <div class="pillar">
+                <div class="advisor-role type-caption">Joint Session</div>
+                <strong class="type-body">Three-Pillar Integration Analysis</strong>
+                <div class="deliverable type-caption">Tax optimization with business growth</div>
+                <div class="deliverable type-caption">Charitable giving coordination with wealth building</div>
+                <div class="deliverable type-caption">Generational transfer while maintaining control</div>
+                <div class="deliverable type-caption">Wealth diversification and risk management</div>
+              </div>
+
+              <div class="pillar">
+                <div class="advisor-role type-caption">Technical Advisor</div>
+                <strong class="type-body">Advanced Strategy Identification</strong>
+                <div class="deliverable type-caption">Minority interest gifting opportunities</div>
+                <div class="deliverable type-caption">Grantor trust strategies for growth assets</div>
+                <div class="deliverable type-caption">Charitable remainder trust for diversification</div>
+                <div class="deliverable type-caption">Family limited partnership structuring</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase">
+          <div class="phase-header">
+            <h2 class="type-title">Phase 2: Core Strategy Development</h2>
+            <div class="timeline type-caption">Duration: 3 weeks | Focus: Wealth building optimization</div>
+          </div>
+
+          <button class="toggle-btn type-body" onclick="toggleSection('core-strategy-dev')">
+            Core Strategy Development Process
+          </button>
+          <div id="core-strategy-dev" class="collapsible">
             <div class="pillar">
-              <span class="advisor-role">Lead Advisor</span>
-              <strong>Business Growth Strategy Assessment</strong>
-              <div class="deliverable">
-                • Business growth plans and capital needs
-              </div>
-              <div class="deliverable">
-                • Reinvestment vs. distribution preferences
-              </div>
-              <div class="deliverable">
-                • Management succession and development
-              </div>
-              <div class="deliverable">
-                • Market expansion and diversification plans
-              </div>
+              <strong class="type-body">Pillar 1: Tax Minimization (Growth Focus)</strong>
+              <div class="deliverable type-caption">Business reinvestment tax strategies</div>
+              <div class="deliverable type-caption">Equipment and expansion tax benefits</div>
+              <div class="deliverable type-caption">Income timing and smoothing strategies</div>
+              <div class="deliverable type-caption">Section 199A deduction optimization</div>
+              <div class="deliverable type-caption">State tax planning for business operations</div>
             </div>
 
             <div class="pillar">
-              <span class="advisor-role">Technical Advisor</span>
-              <strong>Wealth Building Analysis</strong>
-              <div class="deliverable">
-                • Current asset allocation and diversification
-              </div>
-              <div class="deliverable">
-                • Business vs. investment asset balance
-              </div>
-              <div class="deliverable">
-                • Liquidity needs and cash flow planning
-              </div>
-              <div class="deliverable">
-                • Risk tolerance and investment objectives
-              </div>
+              <strong class="type-body">Pillar 2: Charitable Giving Optimization</strong>
+              <div class="deliverable type-caption">Donor-advised fund establishment</div>
+              <div class="deliverable type-caption">Private foundation feasibility analysis</div>
+              <div class="deliverable type-caption">Appreciated business interest gifts</div>
+              <div class="deliverable type-caption">Charitable remainder trust for diversification</div>
+              <div class="deliverable type-caption">Income tax deduction timing optimization</div>
+            </div>
+
+            <div class="pillar">
+              <strong class="type-body">Pillar 3: Generational Transfer (Control Retention)</strong>
+              <div class="deliverable type-caption">Minority interest annual exclusion gifts</div>
+              <div class="deliverable type-caption">Grantor retained annuity trust (GRAT) strategies</div>
+              <div class="deliverable type-caption">Sales to defective grantor trusts</div>
+              <div class="deliverable type-caption">Family limited partnership creation</div>
+              <div class="deliverable type-caption">Dynasty trust planning for growth assets</div>
             </div>
 
             <div class="future-option">
-              <strong>Future Exit Option Preservation</strong>
-              <div class="deliverable">
-                • Maintaining flexibility for future exit planning
-              </div>
-              <div class="deliverable">
-                • Annual exit interest assessment protocol
-              </div>
+              <strong class="type-body">Future Exit Planning Preparation</strong>
+              <div class="deliverable type-caption">Structures that accommodate future exit planning</div>
+              <div class="deliverable type-caption">Valuation discount strategies</div>
+              <div class="deliverable type-caption">Management and succession development</div>
             </div>
           </div>
         </div>
 
-        <button class="toggle-btn" onclick="toggleSection('core-week2')">
-          Week 2: Tax Optimization & Current Planning Review
-        </button>
-        <div id="core-week2" class="collapsible">
-          <div class="week">
-            <h4>Week 2 Activities</h4>
-
-            <div class="pillar">
-              <span class="advisor-role">Technical Advisor</span>
-              <strong>Current Tax Optimization</strong>
-              <div class="deliverable">
-                • Business growth phase tax strategies
-              </div>
-              <div class="deliverable">
-                • Equipment and expansion tax benefits
-              </div>
-              <div class="deliverable">• Retirement plan optimization</div>
-              <div class="deliverable">
-                • Multi-year tax planning opportunities
-              </div>
-            </div>
-
-            <div class="pillar">
-              <span class="advisor-role">Lead Advisor</span>
-              <strong>Current Estate Planning Review</strong>
-              <div class="deliverable">
-                • Existing trust and entity structures
-              </div>
-              <div class="deliverable">• Insurance coverage adequacy</div>
-              <div class="deliverable">
-                • Beneficiary and succession planning
-              </div>
-              <div class="deliverable">• Asset protection considerations</div>
-            </div>
-
-            <div class="pillar">
-              <span class="advisor-role">Both Advisors</span>
-              <strong>Charitable Giving Assessment</strong>
-              <div class="deliverable">
-                • Current giving patterns and motivations
-              </div>
-              <div class="deliverable">
-                • Tax benefit optimization opportunities
-              </div>
-              <div class="deliverable">
-                • Long-term philanthropic objectives
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <button class="toggle-btn" onclick="toggleSection('core-week3')">
-          Week 3: Integration Analysis & Long-term Planning
-        </button>
-        <div id="core-week3" class="collapsible">
-          <div class="week">
-            <h4>Week 3 Activities</h4>
-
-            <div class="pillar">
-              <span class="advisor-role">Joint Session</span>
-              <strong>Three-Pillar Integration Analysis</strong>
-              <div class="deliverable">
-                • Tax optimization with business growth
-              </div>
-              <div class="deliverable">
-                • Charitable giving coordination with wealth building
-              </div>
-              <div class="deliverable">
-                • Generational transfer while maintaining control
-              </div>
-              <div class="deliverable">
-                • Wealth diversification and risk management
-              </div>
-            </div>
-
-            <div class="pillar">
-              <span class="advisor-role">Technical Advisor</span>
-              <strong>Advanced Strategy Identification</strong>
-              <div class="deliverable">
-                • Minority interest gifting opportunities
-              </div>
-              <div class="deliverable">
-                • Grantor trust strategies for growth assets
-              </div>
-              <div class="deliverable">
-                • Charitable remainder trust for diversification
-              </div>
-              <div class="deliverable">
-                • Family limited partnership structuring
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="phase">
-        <div class="phase-header">
-          <h2>Phase 2: Core Strategy Development (Weeks 4-6)</h2>
-          <span class="timeline"
-            >Duration: 3 weeks | Focus: Wealth building optimization</span
-          >
-        </div>
-
-        <button class="toggle-btn" onclick="toggleSection('core-strategy-dev')">
-          Core Strategy Development Process
-        </button>
-        <div id="core-strategy-dev" class="collapsible">
-          <div class="pillar">
-            <strong>Pillar 1: Tax Minimization (Growth Focus)</strong>
-            <div class="deliverable">
-              • Business reinvestment tax strategies
-            </div>
-            <div class="deliverable">
-              • Equipment and expansion tax benefits
-            </div>
-            <div class="deliverable">
-              • Income timing and smoothing strategies
-            </div>
-            <div class="deliverable">• Section 199A deduction optimization</div>
-            <div class="deliverable">
-              • State tax planning for business operations
-            </div>
+        <div class="phase">
+          <div class="phase-header">
+            <h2 class="type-title">Phase 3: Client Education & Presentation</h2>
+            <div class="timeline type-caption">Duration: 2 weeks | Focus: Long-term strategy presentation</div>
           </div>
 
           <div class="pillar">
-            <strong>Pillar 2: Charitable Giving Optimization</strong>
-            <div class="deliverable">• Donor-advised fund establishment</div>
-            <div class="deliverable">
-              • Private foundation feasibility analysis
-            </div>
-            <div class="deliverable">• Appreciated business interest gifts</div>
-            <div class="deliverable">
-              • Charitable remainder trust for diversification
-            </div>
-            <div class="deliverable">
-              • Income tax deduction timing optimization
-            </div>
+            <strong class="type-body">Presentation Structure (75 minutes)</strong>
+            <div class="deliverable type-caption">Current state and wealth building assessment (15 min)</div>
+            <div class="deliverable type-caption">Three-pillar core strategy presentation (45 min)</div>
+            <div class="deliverable type-caption">Implementation timeline and flexibility (15 min)</div>
           </div>
 
-          <div class="pillar">
-            <strong>Pillar 3: Generational Transfer (Control Retention)</strong>
-            <div class="deliverable">
-              • Minority interest annual exclusion gifts
-            </div>
-            <div class="deliverable">
-              • Grantor retained annuity trust (GRAT) strategies
-            </div>
-            <div class="deliverable">• Sales to defective grantor trusts</div>
-            <div class="deliverable">• Family limited partnership creation</div>
-            <div class="deliverable">
-              • Dynasty trust planning for growth assets
-            </div>
-          </div>
-
-          <div class="future-option">
-            <strong>Future Exit Planning Preparation</strong>
-            <div class="deliverable">
-              • Structures that accommodate future exit planning
-            </div>
-            <div class="deliverable">• Valuation discount strategies</div>
-            <div class="deliverable">
-              • Management and succession development
+          <div class="annual-review">
+            <h3 class="type-title">Annual Exit Planning Review Protocol</h3>
+            <div class="pillar">
+              <div class="deliverable type-caption">Annual assessment of exit interest and timeline</div>
+              <div class="deliverable type-caption">Framework transition to four-pillar if applicable</div>
+              <div class="deliverable type-caption">Strategy modification for changing objectives</div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="phase">
-        <div class="phase-header">
-          <h2>Phase 3: Client Education & Presentation (Weeks 7-8)</h2>
-          <span class="timeline"
-            >Duration: 2 weeks | Focus: Long-term strategy presentation</span
-          >
-        </div>
+        <div class="phase">
+          <div class="phase-header">
+            <h2 class="type-title">Phase 4: Core Implementation</h2>
+            <div class="timeline type-caption">Duration: 6 weeks | Focus: Flexible long-term structures</div>
+          </div>
 
-        <div class="pillar">
-          <strong>Presentation Structure (75 minutes)</strong>
-          <div class="deliverable">
-            • Current state and wealth building assessment (15 min)
-          </div>
-          <div class="deliverable">
-            • Three-pillar core strategy presentation (45 min)
-          </div>
-          <div class="deliverable">
-            • Implementation timeline and flexibility (15 min)
+          <button class="toggle-btn type-body" onclick="toggleSection('core-implementation')">
+            Implementation Details
+          </button>
+          <div id="core-implementation" class="collapsible">
+            <div class="pillar">
+              <strong class="type-body">Tax Strategy Implementation</strong>
+              <div class="deliverable type-caption">Business entity optimization</div>
+              <div class="deliverable type-caption">Retirement plan establishment/optimization</div>
+              <div class="deliverable type-caption">Equipment purchase and timing strategies</div>
+              <div class="deliverable type-caption">Multi-year tax planning setup</div>
+            </div>
+
+            <div class="pillar">
+              <strong class="type-body">Charitable Structure Implementation</strong>
+              <div class="deliverable type-caption">Donor-advised fund or foundation setup</div>
+              <div class="deliverable type-caption">Charitable giving policy development</div>
+              <div class="deliverable type-caption">Tax-efficient giving structure implementation</div>
+            </div>
+
+            <div class="pillar">
+              <strong class="type-body">Generational Transfer Implementation</strong>
+              <div class="deliverable type-caption">Family limited partnership formation</div>
+              <div class="deliverable type-caption">Trust structure establishment</div>
+              <div class="deliverable type-caption">Initial minority interest gifts</div>
+              <div class="deliverable type-caption">Annual gifting program setup</div>
+            </div>
+
+            <div class="pillar">
+              <strong class="type-body">Monitoring and Review Setup</strong>
+              <div class="deliverable type-caption">Quarterly review protocol establishment</div>
+              <div class="deliverable type-caption">Annual exit assessment scheduling</div>
+              <div class="deliverable type-caption">Performance tracking system setup</div>
+            </div>
           </div>
         </div>
 
         <div class="annual-review">
-          <strong>Annual Exit Planning Review Protocol</strong>
-          <div class="deliverable">
-            • Annual assessment of exit interest and timeline
-          </div>
-          <div class="deliverable">
-            • Framework transition to four-pillar if applicable
-          </div>
-          <div class="deliverable">
-            • Strategy modification for changing objectives
-          </div>
-        </div>
-      </div>
-
-      <div class="phase">
-        <div class="phase-header">
-          <h2>Phase 4: Core Implementation (Weeks 9-14)</h2>
-          <span class="timeline"
-            >Duration: 6 weeks | Focus: Flexible long-term structures</span
-          >
-        </div>
-
-        <button
-          class="toggle-btn"
-          onclick="toggleSection('core-implementation')"
-        >
-          Implementation Details
-        </button>
-        <div id="core-implementation" class="collapsible">
+          <h3 class="type-title">Ongoing Management: Annual Framework Assessment</h3>
           <div class="pillar">
-            <strong>Tax Strategy Implementation</strong>
-            <div class="deliverable">• Business entity optimization</div>
-            <div class="deliverable">
-              • Retirement plan establishment/optimization
-            </div>
-            <div class="deliverable">
-              • Equipment purchase and timing strategies
-            </div>
-            <div class="deliverable">• Multi-year tax planning setup</div>
-          </div>
-
-          <div class="pillar">
-            <strong>Charitable Structure Implementation</strong>
-            <div class="deliverable">
-              • Donor-advised fund or foundation setup
-            </div>
-            <div class="deliverable">
-              • Charitable giving policy development
-            </div>
-            <div class="deliverable">
-              • Tax-efficient giving structure implementation
-            </div>
-          </div>
-
-          <div class="pillar">
-            <strong>Generational Transfer Implementation</strong>
-            <div class="deliverable">
-              • Family limited partnership formation
-            </div>
-            <div class="deliverable">• Trust structure establishment</div>
-            <div class="deliverable">• Initial minority interest gifts</div>
-            <div class="deliverable">• Annual gifting program setup</div>
-          </div>
-
-          <div class="pillar">
-            <strong>Monitoring and Review Setup</strong>
-            <div class="deliverable">
-              • Quarterly review protocol establishment
-            </div>
-            <div class="deliverable">• Annual exit assessment scheduling</div>
-            <div class="deliverable">• Performance tracking system setup</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="annual-review">
-        <h3>Ongoing Management: Annual Framework Assessment</h3>
-        <div class="pillar">
-          <strong>Annual Review Components</strong>
-          <div class="deliverable">
-            • Business growth and exit timeline reassessment
-          </div>
-          <div class="deliverable">
-            • Framework transition evaluation (three to four-pillar)
-          </div>
-          <div class="deliverable">
-            • Strategy effectiveness and optimization review
-          </div>
-          <div class="deliverable">• Tax law changes and planning updates</div>
-          <div class="deliverable">
-            • Family situation and objective changes
+            <strong class="type-body">Annual Review Components</strong>
+            <div class="deliverable type-caption">Business growth and exit timeline reassessment</div>
+            <div class="deliverable type-caption">Framework transition evaluation (three to four-pillar)</div>
+            <div class="deliverable type-caption">Strategy effectiveness and optimization review</div>
+            <div class="deliverable type-caption">Tax law changes and planning updates</div>
+            <div class="deliverable type-caption">Family situation and objective changes</div>
           </div>
         </div>
       </div>
@@ -382,8 +629,11 @@
 
     <script>
       function toggleSection(sectionId) {
-          var section = document.getElementById(sectionId);
-          section.classList.toggle('active');
+        const section = document.getElementById(sectionId);
+        const button = document.querySelector(`[onclick="toggleSection('${sectionId}')"]`);
+        
+        section.classList.toggle('active');
+        button.classList.toggle('active');
       }
     </script>
   </body>
